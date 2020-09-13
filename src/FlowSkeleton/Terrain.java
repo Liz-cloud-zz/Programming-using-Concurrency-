@@ -92,7 +92,7 @@ public class Terrain {
          sc.useLocale(Locale.US);
 			
 			// read grid dimensions
-			// x and y correpond to columns and rows, respectively.
+			// x and y correspond to columns and rows, respectively.
 			// Using image coordinate system where top left is (0, 0).
 			dimy = sc.nextInt(); 
 			dimx = sc.nextInt();

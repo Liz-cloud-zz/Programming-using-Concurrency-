@@ -5,12 +5,14 @@ import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import javax.swing.JPanel;
 import java.util.List;
+import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class FlowPanel extends JPanel implements Runnable {
 
 	Terrain land;
 	private List<Water> blocks=new LinkedList<Water>();
-	private BufferedImage grid=null;
-	private BufferedImage water=null;
+	AtomicBoolean atomicBoolean=new AtomicBoolean();
 
 	FlowPanel(Terrain terrain) {
 		land=terrain;
@@ -37,13 +39,20 @@ public class FlowPanel extends JPanel implements Runnable {
 				b.draw(g);
 			}
 		}
-
 	}
 
 	public void run() {
+		Graphics g=null;
+		boolean flag=atomicBoolean.get();
+		while (flag==false) {
+			for (Water b:blocks){
+				b.draw(g);
+			}
+			repaint();
+		}
 		// display loop here
 		// to do: this should be controlled by the GUI
 		// to allow stopping and starting
-	    repaint();
+
 	}
 }

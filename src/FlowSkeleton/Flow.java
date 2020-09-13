@@ -62,7 +62,8 @@ public class Flow {
 		pause.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				// to do ask threads to stop
-				frame.dispose();
+				fp.atomicBoolean.set(true);
+				fp.run();
 			}
 		});
 		//add MouseLister, buttons "play"
@@ -71,7 +72,7 @@ public class Flow {
 		play.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				// to do ask threads to stop
-//				w.transferWater(1,1);
+				fp.run();
 			}
 		});
 
