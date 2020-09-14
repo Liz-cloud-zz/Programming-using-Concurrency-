@@ -31,8 +31,8 @@ public class Flow {
     	frame.getContentPane().setLayout(new BorderLayout());
       	JPanel g = new JPanel();
         g.setLayout(new BoxLayout(g, BoxLayout.PAGE_AXIS)); 
-   
-		fp = new FlowPanel(landdata);
+   		Water w=new Water(landdata,3);
+		fp = new FlowPanel(w);
 		fp.setPreferredSize(new Dimension(frameX,frameY));
 		g.add(fp);
 	    
@@ -53,7 +53,7 @@ public class Flow {
 		reset.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				// to do ask threads to stop
-				fp.removeWater();
+				w.removeWater();
 			}
 		});
 		//add MouseLister, buttons "pause"
@@ -75,17 +75,12 @@ public class Flow {
 				fp.run();
 			}
 		});
-
 		fp.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void mousePressed(MouseEvent e) {
 				int row=e.getY();
 				int column=e.getX();
-				if (!(column == 0) || !(row == 0) || !(column== landdata.dimx - 1) || !(row == landdata.dimy)) {
-					Water w = new Water(landdata, 3, row-12, column-12);
-					w.addWater();
-					fp.addBlock(w);
-				}
+					w.addWater(row-12,column-12);
 			}
 		});
 
