@@ -35,18 +35,34 @@ public class Flow {
 		fp = new FlowPanel(w);
 		fp.setPreferredSize(new Dimension(frameX,frameY));
 		g.add(fp);
-	    
+
 		// to do: add a MouseListener, buttons and ActionListeners on those buttons
 		JPanel b = new JPanel();
 	    b.setLayout(new BoxLayout(b, BoxLayout.LINE_AXIS));
+
+		fp.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				int row = e.getY();
+				int column = e.getX();
+				fp.end();
+				if (!((column == 0) || (column == landdata.getDimX() - 1) || (row == 0) || (row == landdata.getDimY() - 1))) {
+					w.addWater(column, row);
+					fp.repaint();
+				}
+			}
+		});
+
 		JButton endB = new JButton("End");;
 		// add the listener to the jbutton to handle the "pressed" event
 		endB.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				// to do ask threads to stop
+				fp.end();
 				frame.dispose();
 			}
 		});
+
 		//add MouseLister, buttons "play"
 		JButton reset = new JButton("Reset");;
 		// add the listener to the jbutton to handle the "pressed" event
@@ -54,18 +70,10 @@ public class Flow {
 			public void actionPerformed(ActionEvent e){
 				// to do ask threads to stop
 				w.removeWater();
+				fp.repaint();
 			}
 		});
-		//add MouseLister, buttons "pause"
-		JButton pause = new JButton("Pause");;
-		// add the listener to the jbutton to handle the "pressed" event
-		pause.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				// to do ask threads to stop
-				fp.atomicBoolean.set(true);
-				fp.run();
-			}
-		});
+
 		//add MouseLister, buttons "play"
 		JButton play = new JButton("Play");;
 		// add the listener to the jbutton to handle the "pressed" event
@@ -73,14 +81,17 @@ public class Flow {
 			public void actionPerformed(ActionEvent e){
 				// to do ask threads to stop
 				fp.run();
+				fp.unpause();
 			}
 		});
-		fp.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				int row=e.getY();
-				int column=e.getX();
-					w.addWater(row-12,column-12);
+
+		//add MouseLister, buttons "pause"
+		JButton pause = new JButton("Pause");;
+		// add the listener to the jbutton to handle the "pressed" event
+		pause.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				// to do ask threads to stop
+				fp.pause();
 			}
 		});
 
@@ -98,8 +109,8 @@ public class Flow {
         Thread fpt = new Thread(fp);
         fpt.start();
 	}
-	
-		
+
+	//main method passses in the textfile of terrain heights and dimension as argument and creates a terrain image and calls the setupGUI method
 	public static void main(String[] args) {
 		Terrain landdata = new Terrain();
 		
