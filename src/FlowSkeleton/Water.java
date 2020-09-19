@@ -2,6 +2,7 @@ package FlowSkeleton;
 import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Scanner;
 public class Water {
@@ -46,11 +47,27 @@ public class Water {
     }
 
 //    //transfer water to the lowest point among the surrounding grid points from the current point
-    public synchronized void transferWater() {
+    public void transferWater(int thread) {
         int row = t.getDimY();
         int columns = t.getDimX();
         int [] coordinates = new int[2];
-        Iterator i =t.permute.iterator();
+        int half=(t.permute.size())/2;
+        Iterator i = null;
+        ArrayList<Integer> first=new ArrayList();
+        for(int index=0;index<half;index++){
+            first.add(t.permute.get(index));
+        }
+        ArrayList<Integer> second=new ArrayList();
+        for(int in=0;in<half;in++){
+            second.add(t.permute.get(in));
+        }
+        //split the data between two threads
+        if(thread==1){
+            i=first.iterator();
+        }
+        else if(thread==2){
+            i=second.iterator();
+        }
         int  blue=Color.blue.getRGB();
         int transparent=Color.TRANSLUCENT;
         while (i.hasNext()) {
