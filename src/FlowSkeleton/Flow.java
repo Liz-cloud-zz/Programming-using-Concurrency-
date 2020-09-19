@@ -39,14 +39,15 @@ public class Flow {
 		// to do: add a MouseListener, buttons and ActionListeners on those buttons
 		JPanel b = new JPanel();
 	    b.setLayout(new BoxLayout(b, BoxLayout.LINE_AXIS));
+		JLabel timestep;
 
 		fp.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				int row = e.getY();
 				int column = e.getX();
-				fp.end();
 				if (!((column == 0) || (column == landdata.getDimX() - 1) || (row == 0) || (row == landdata.getDimY() - 1))) {
+					fp.end();
 					w.addWater(column, row);
 					fp.repaint();
 				}
@@ -58,17 +59,18 @@ public class Flow {
 		endB.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				// to do ask threads to stop
-				fp.end();
+		 	   fp.end();
 				frame.dispose();
 			}
 		});
 
-		//add MouseLister, buttons "play"
+		//add MouseLister, buttons "reset"
 		JButton reset = new JButton("Reset");;
 		// add the listener to the jbutton to handle the "pressed" event
 		reset.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				// to do ask threads to stop
+				fp.end();
 				w.removeWater();
 				fp.repaint();
 			}
@@ -80,11 +82,40 @@ public class Flow {
 		play.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				// to do ask threads to stop
-				fp.run();
+				fp.running.set(true);
 				fp.unpause();
+				Thread fpt1=new Thread(fp);
+				Thread fpt2=new Thread(fp);
+				Thread fpt3=new Thread(fp);
+				Thread fpt4=new Thread(fp);
+				fpt1.start();
+				fpt2.start();
+				fpt3.start();
+				fpt4.start();
+
+//				try {
+//					fpt1.join();
+//				} catch (InterruptedException interruptedException) {
+//					interruptedException.printStackTrace();
+//				}
+//				try {
+//					fpt2.join();
+//				} catch (InterruptedException interruptedException) {
+//					interruptedException.printStackTrace();
+//				}
+//				try {
+//					fpt3.join();
+//				} catch (InterruptedException interruptedException) {
+//					interruptedException.printStackTrace();
+//				}
+//				try {
+//					fpt4.join();
+//				} catch (InterruptedException interruptedException) {
+//					interruptedException.printStackTrace();
+//				}
+
 			}
 		});
-
 		//add MouseLister, buttons "pause"
 		JButton pause = new JButton("Pause");;
 		// add the listener to the jbutton to handle the "pressed" event
@@ -92,13 +123,16 @@ public class Flow {
 			public void actionPerformed(ActionEvent e){
 				// to do ask threads to stop
 				fp.pause();
+
 			}
 		});
-
+		timestep=new JLabel("Time step: "+String.valueOf(fp.getTimeStep()));
 		b.add(reset);
 		b.add(pause);
 		b.add(play);
 		b.add(endB);
+		b.add(timestep);
+
 		g.add(b);
     	
 		frame.setSize(frameX, frameY+50);	// a little extra space at the bottom for buttons
@@ -106,8 +140,9 @@ public class Flow {
       	frame.add(g); //add contents to window
         frame.setContentPane(g);
         frame.setVisible(true);
-        Thread fpt = new Thread(fp);
-        fpt.start();
+//        Thread fpt=new Thread(fp);
+//        fpt.start();
+
 	}
 
 	//main method passses in the textfile of terrain heights and dimension as argument and creates a terrain image and calls the setupGUI method

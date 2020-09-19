@@ -17,31 +17,36 @@ public class Water {
 
     //draw the box on the grid point
     public void addWater(int x,int y){
-            int pixel=water.getRGB(x,y);
-            int blue=pixel&0xff;
-            if(!(pixel==Color.blue.getRGB())){
-                pixel=Color.blue.getRGB();
-                int max_row=y+3;
-                int max_column=x+3;
+        int pixel=water.getRGB(x,y);
+        int blue=pixel&0xff;
+        if(!(pixel==Color.blue.getRGB())){
+            pixel=Color.blue.getRGB();
+            int max_row=y+3;
+            int max_column=x+3;
+//            if(!((y-3<=0)||(x-3<=0)||(max_column<t.getDimX()-1)||(max_row<t.getDimY()-1))){
                 for(int row=y-3;row<max_row+1;row++){
                     for(int column=x-3;column<max_column+1;column++){
                         this.t.height[row][column] += convertWater();
                         water.setRGB(column,row,pixel);
                     }
                 }
-            }
+//            }
+
+        }
     }
-    //get the water surface at each point
-    public float getWater_surface(int x, int y) {
-        return (t.getHeight(x, y) + convertWater());
-    }
+
     // water unit corresponds to a depth of 0.01m so this depth is 0.03m
     public float convertWater() {
         return (float) ((this.depth) * 0.01);
     }
 
+    //get the water surface at each point
+    public float getWater_surface(int x, int y) {
+        return (t.getHeight(x, y) + convertWater());
+    }
+
 //    //transfer water to the lowest point among the surrounding grid points from the current point
-    public void transferWater() {
+    public synchronized void transferWater() {
         int row = t.getDimY();
         int columns = t.getDimX();
         int [] coordinates = new int[2];
@@ -113,7 +118,6 @@ public class Water {
                                 water.setRGB(x, y, transparent);
                                 t.height[coordinates[1] + 1][coordinates[0] - 1] += 0.01;
                                 water.setRGB(coordinates[0]-1, coordinates[1] + 1, blue);
-
                             }
                         } else if ((g < a) & (g < b) & (g < c) & (g < d) & (g < e) & (g < f) & (g < h)) {
                             if (g < point) {
