@@ -35,10 +35,10 @@ public class Flow {
 		fp = new FlowPanel(w);
 		fp.setPreferredSize(new Dimension(frameX,frameY));
 		g.add(fp);
-		Producer p=new Producer(w,1);
-		Consumer c=new Consumer(p);
-		SecondProducer p2=new SecondProducer(w,2);
-		SecondConsumer c2;
+		fp.end.set(true);
+		Thread fpt=new Thread(fp);
+		fpt.start();
+
 		// to do: add a MouseListener, buttons and ActionListeners on those buttons
 		JPanel b = new JPanel();
 	    b.setLayout(new BoxLayout(b, BoxLayout.LINE_AXIS));
@@ -47,12 +47,12 @@ public class Flow {
 		fp.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-//				p.stop.set(true);
-				p2.stop.set(true);
+
 				int row = e.getY();
 				int column = e.getX();
-				if (!((column == 0) || (column == landdata.getDimX() - 1) || (row == 0) || (row == landdata.getDimY() - 1))) {
+				if ((column != 0)&(column != landdata.getDimX() - 1) & (row != 0) || (row != landdata.getDimY() - 1)) {
 					w.addWater(column, row);
+					w.inuse.set(true);
 					fp.repaint();
 				}
 			}
@@ -63,8 +63,6 @@ public class Flow {
 		endB.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				// to do ask threads to stop
-//				p.stop.set(true);
-//				p2.stop.set(true);
 				frame.dispose();
 			}
 		});
@@ -75,8 +73,6 @@ public class Flow {
 		reset.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				// to do ask threads to stop
-//				p.stop.set(true);
-//				p2.stop.set(true);
 				w.removeWater();
 				fp.repaint();
 			}
@@ -86,43 +82,13 @@ public class Flow {
 		JButton play = new JButton("Play");;
 		// add the listener to the jbutton to handle the "pressed" event
 		play.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
+			public void actionPerformed(ActionEvent e) {
 				// to do ask threads to stop
-				p.stop.set(false);
-				p2.stop.set(false);
-				Thread fpt1=new Thread(p);
-				Thread fpt2=new Thread(c);
-				Thread fpt3=new Thread(p2);
-				Thread fpt4=new Thread(c);
+				w.inuse.set(false);
+				fp.running.set(true);
 
-				fpt1.start();
-				fpt2.start();
-				fpt3.start();
-				fpt4.start();
-//				p.start();
-//				c.start();
-
-//				try {
-//					fpt1.join();
-//				} catch (InterruptedException interruptedException) {
-//					interruptedException.printStackTrace();
-//				}
-//				try {
-//					fpt2.join();
-//				} catch (InterruptedException interruptedException) {
-//					interruptedException.printStackTrace();
-//				}
-//				try {
-//					fpt3.join();
-//				} catch (InterruptedException interruptedException) {
-//					interruptedException.printStackTrace();
-//				}
-//				try {
-//					fpt4.join();
-//				} catch (InterruptedException interruptedException) {
-//					interruptedException.printStackTrace();
-//				}
 			}
+
 		});
 		//add MouseLister, buttons "pause"
 		JButton pause = new JButton("Pause");;
@@ -130,10 +96,10 @@ public class Flow {
 		pause.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				// to do ask threads to stop
-				p.stop.set(true);
-
+				w.inuse.set(false);
+				fp.running.set(false);
 			}
-		});
+			});
 
 		//timestep=new JLabel("Time step: "+String.valueOf(fp.getTimeStep()));
 		b.add(reset);

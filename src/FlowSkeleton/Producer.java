@@ -2,58 +2,61 @@ package FlowSkeleton;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import javax.swing.JPanel;
 import java.util.List;
 import java.util.Iterator;
 import java.util.concurrent.atomic.*;
 
-public class Producer extends Thread{
+public class Producer implements Runnable{
     private int threadnum;
-    AtomicBoolean stop;
     Water w;
+    Thread thread;
+    String threadName;
 
-    public Producer(Water w ,int num){
-        this.w=w;
-        this.threadnum=num;
-        stop=new AtomicBoolean(false);
+
+    public Producer(Water w, int num) {
+        this.w = w;
+        this.threadnum = num;
+        threadName = String.valueOf(threadnum);
+        w.t.genPermute();
 
     }
-    public void run(){
-        synchronized (w){
-            while(!stop.get()){
-                try {
-                    w.transferWater(threadnum);
-//                Thread.sleep(10);  // milliseconds
-                 } catch (Exception ex) {ex.printStackTrace();}
+    public synchronized void run() {
+        //split the permute array in 4 to assign each quater to the thread
+        if(!w.inuse.get()){
+            int quarter = (w.t.permute.size()) / 4;
+            ArrayList<Integer> first = new ArrayList();
+            for (int index0 = 0; index0 < quarter - 1; index0++) {
+                first.add(w.t.permute.get(index0));
             }
-            w.notify();
+            ArrayList<Integer> second = new ArrayList();
+            for (int index1 = quarter; index1 < (quarter * 2) - 1; index1++) {
+                second.add(w.t.permute.get(index1));
+            }
+            ArrayList<Integer> third = new ArrayList();
+            for (int index2 = (quarter * 2); index2 < (quarter * 3) - 1; index2++) {
+                third.add(w.t.permute.get(index2));
+            }
+            ArrayList<Integer> fourth = new ArrayList();
+            for (int index3 = (quarter * 3); index3 < w.t.permute.size(); index3++) {
+                fourth.add(w.t.permute.get(index3));
+            }
+
+            //split the data between two threads
+            if (threadnum == 0) {
+                w.transferWater(first);
+            } else if (threadnum == 1) {
+                w.transferWater(second);
+            } else if (threadnum == 2) {
+                w.transferWater(third);
+            } else if (threadnum == 3) {
+                w.transferWater(fourth);
+            }
+
         }
 
-
     }
-//    public void start(){
-//        if(thread==null){
-//            thread=new Thread(this,this.threadName);
-//            thread.start();
-//        }
-//    }
-//    public synchronized void flow(){
-//        while(!stop.get()){
-//            try {
-//                wait();
-//            }catch (InterruptedException e){}
-//            stop.set(false);
-//            w.transferWater();
-//        }
-//    }
-//    public synchronized void paused(){
-//        while (stop.get()){
-//            try {
-//                wait();
-//            }catch (InterruptedException e){}
-//            stop.set(true);
-//            notify();
-//        }
-//    }
 }
+

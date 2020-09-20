@@ -2,28 +2,41 @@ package FlowSkeleton;
 import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
-import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class Water {
     Terrain t;
     int depth;
     BufferedImage water;
+    ArrayList<int[]> blocks;
+    volatile AtomicBoolean inuse;
     public Water(Terrain t, int depth) {
         this.depth = depth;
         this.t = t;
         water=new BufferedImage(this.t.getDimX(),this.t.getDimY(), BufferedImage.TYPE_INT_ARGB);
         t.genPermute();
+        blocks=new ArrayList<>();
+        inuse=new AtomicBoolean();
     }
 
     //draw the box on the grid point
     public void addWater(int x,int y){
+        inuse.set(true);
+        int[] coordinate=new int[2];
+        coordinate[0]=x;
+        coordinate[1]=y;
+        blocks.add(coordinate);
         int pixel=water.getRGB(x,y);
         int blue=pixel&0xff;
         if(!(pixel==Color.blue.getRGB())){
             pixel=Color.blue.getRGB();
             int max_row=y+3;
             int max_column=x+3;
+
 //            if(!((y-3<=0)||(x-3<=0)||(max_column<t.getDimX()-1)||(max_row<t.getDimY()-1))){
                 for(int row=y-3;row<max_row+1;row++){
                     for(int column=x-3;column<max_column+1;column++){
@@ -47,40 +60,31 @@ public class Water {
     }
 
 //    //transfer water to the lowest point among the surrounding grid points from the current point
-    public void transferWater(int thread) {
+    public void transferWater(ArrayList permu) {
         int row = t.getDimY();
         int columns = t.getDimX();
-        int [] coordinates = new int[2];
-        int half=(t.permute.size())/2;
-        Iterator i = null;
-        ArrayList<Integer> first=new ArrayList();
-        for(int index=0;index<half;index++){
-            first.add(t.permute.get(index));
-        }
-        ArrayList<Integer> second=new ArrayList();
-        for(int in=0;in<half;in++){
-            second.add(t.permute.get(in));
-        }
-        //split the data between two threads
-        if(thread==1){
-            i=first.iterator();
-        }
-        else if(thread==2){
-            i=second.iterator();
-        }
-        int  blue=Color.blue.getRGB();
-        int transparent=Color.TRANSLUCENT;
-        while (i.hasNext()) {
-                int index = (int) i.next();
-                t.getPermute(index, coordinates);
-                int x=coordinates[0];
-                int y=coordinates[1];
-                float point = getWater_surface(x, y);
-                int pixel=water.getRGB(x,y);
+        int[] coordinates = new int[2];
+
+        Iterator iterator=permu.iterator();
+        int index = (int) iterator.next();
+        t.getPermute(index, coordinates);
+        int blue = Color.blue.getRGB();
+        int transparent = Color.TRANSLUCENT;
+        int[] water_coordinates;
+
 //check if there is water at that point on the terrain if there is water transfer water
-            if(pixel==blue){
-                    if (!((x == 0) | (x == columns - 1) | (y == 0) | (y == row - 1))) {
-                        float a, b, c, d, e, f, g, h;
+        while (blocks.contains(coordinates)) {
+            while (iterator.hasNext()) {
+                water_coordinates = blocks.get(blocks.indexOf(coordinates));
+
+                if (Arrays.equals(water_coordinates, coordinates)) {
+                int x = coordinates[0];
+                int y = coordinates[1];
+                float point = getWater_surface(x, y);
+                int pixel = water.getRGB(x, y);
+//                if(pixel==blue){
+                    if (((x != 0) & (x != columns - 1) & (y != 0) & (y != row - 1))) {
+                        float a, b, c, d, e, f, g, h, i;
                         a = getWater_surface(coordinates[0] - 1, coordinates[1] - 1);
                         b = getWater_surface(coordinates[0], coordinates[1] - 1);
                         c = getWater_surface(coordinates[0] + 1, coordinates[1] - 1);
@@ -100,6 +104,7 @@ public class Water {
                                 water.setRGB(x, y, transparent);
                                 t.height[coordinates[1] - 1][coordinates[0] - 1] += 0.01;
                                 water.setRGB(coordinates[0] - 1, coordinates[1] - 1, blue);
+                                inuse.set(false);
                             }
                         } else if (((b < a) & (b < c) & (b < d) & (b < e) & (b < f) & (b < g) & (b < h))) {
                             if (b < point) {
@@ -107,34 +112,39 @@ public class Water {
                                 water.setRGB(x, y, transparent);
                                 t.height[coordinates[1] - 1][coordinates[0]] += 0.01;
                                 water.setRGB(coordinates[0], coordinates[1] - 1, blue);
+                                inuse.set(false);
                             }
                         } else if ((c < a) & (c < b) & (c < d) & (c < e) & (c < f) & (c < g) & (c < h)) {
                             if (c < point) {
                                 t.height[y][x] -= 0.01;
                                 water.setRGB(x, y, transparent);
                                 t.height[coordinates[1] - 1][coordinates[0] + 1] += 0.01;
-                                water.setRGB(coordinates[0]+1, coordinates[1] - 1, blue);
+                                water.setRGB(coordinates[0] + 1, coordinates[1] - 1, blue);
+                                inuse.set(false);
                             }
                         } else if ((d < a) & (d < b) & (d < c) & (d < e) & (d < f) & (d < g) & (d < h)) {
                             if (d < point) {
                                 t.height[y][x] -= 0.01;
                                 water.setRGB(x, y, transparent);
                                 t.height[coordinates[1]][coordinates[0] - 1] += 0.01;
-                                water.setRGB(coordinates[0]-1, coordinates[1] , blue);
+                                water.setRGB(coordinates[0] - 1, coordinates[1], blue);
+                                inuse.set(false);
                             }
                         } else if ((e < a) & (e < b) & (e < c) & (e < d) & (e < f) & (e < g) & (e < h)) {
                             if (b < point) {
                                 t.height[y][x] -= 0.01;
                                 water.setRGB(x, y, transparent);
                                 t.height[coordinates[1]][coordinates[0] + 1] += 0.01;
-                                water.setRGB(coordinates[0]+1, coordinates[1] , blue);
+                                water.setRGB(coordinates[0] + 1, coordinates[1], blue);
+                                inuse.set(false);
                             }
                         } else if ((f < a) & (f < b) & (f < c) & (f < d) & (f < e) & (f < g) & (e < h)) {
                             if (f < point) {
                                 t.height[y][x] -= 0.01;
                                 water.setRGB(x, y, transparent);
                                 t.height[coordinates[1] + 1][coordinates[0] - 1] += 0.01;
-                                water.setRGB(coordinates[0]-1, coordinates[1] + 1, blue);
+                                water.setRGB(coordinates[0] - 1, coordinates[1] + 1, blue);
+                                inuse.set(false);
                             }
                         } else if ((g < a) & (g < b) & (g < c) & (g < d) & (g < e) & (g < f) & (g < h)) {
                             if (g < point) {
@@ -142,19 +152,23 @@ public class Water {
                                 water.setRGB(x, y, transparent);
                                 t.height[coordinates[1] + 1][coordinates[0]] += 0.01;
                                 water.setRGB(coordinates[0], coordinates[1] + 1, blue);
+                                inuse.set(false);
                             }
                         } else if ((h < a) & (h < b) & (h < c) & (h < d) & (h < e) & (h < f) & (h < g)) {
                             if (h < point) {
                                 t.height[y][x] -= 0.01;
                                 water.setRGB(x, y, transparent);
                                 t.height[coordinates[1] + 1][coordinates[0] + 1] += 0.01;
-                                water.setRGB(coordinates[0]+1, coordinates[1] + 1, blue);
+                                water.setRGB(coordinates[0] + 1, coordinates[1] + 1, blue);
+                                inuse.set(false);
                             }
                         }
+                    }
                     }
                 }
             }
         }
+//    }
 
 //return the water image
     public BufferedImage getImg(){return water;}
