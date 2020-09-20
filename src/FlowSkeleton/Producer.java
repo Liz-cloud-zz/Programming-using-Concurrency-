@@ -25,7 +25,7 @@ public class Producer implements Runnable{
     }
     public synchronized void run() {
         //split the permute array in 4 to assign each quater to the thread
-        if(!w.inuse.get()){
+
             int quarter = (w.t.permute.size()) / 4;
             ArrayList<Integer> first = new ArrayList();
             for (int index0 = 0; index0 < quarter - 1; index0++) {
@@ -58,5 +58,5 @@ public class Producer implements Runnable{
         }
 
     }
-}
+
 

@@ -8,15 +8,18 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.concurrent.atomic.*;
 import java.util.concurrent.locks.ReentrantLock;
-
 public class FlowPanel extends JPanel implements Runnable {
+
 	Producer[] producers=new Producer[4];
 	Thread[] threads = new Thread[4];
 	volatile AtomicBoolean running=new AtomicBoolean();
 	volatile AtomicBoolean end=new AtomicBoolean();
+	final AtomicInteger count=new AtomicInteger(0);
 	Water water;
+
 	FlowPanel(Water w){
 		this.water=w;
+		end.set(true);
 	}
 		// responsible for painting the terrain and water
 	// as images
@@ -32,6 +35,10 @@ public class FlowPanel extends JPanel implements Runnable {
 		}
 	}
 
+
+	public int getTimeStep(){
+		return count.get();
+	}
 	public void run() {
 		for(int num=0;num<4;num++){
 			producers[num]=new Producer(water,num);
@@ -40,6 +47,7 @@ public class FlowPanel extends JPanel implements Runnable {
 		while (!end.get()){
 			if(running.get()){
 				synchronized (this){
+					if(end.get()){break;}
 					for (int t=0;t<4;t++){
 						threads[t].run();
 					}
@@ -49,6 +57,7 @@ public class FlowPanel extends JPanel implements Runnable {
 						}
 					}catch (Exception e){}
 				}
+				count.incrementAndGet();
 				this.repaint();
 			}
 		}

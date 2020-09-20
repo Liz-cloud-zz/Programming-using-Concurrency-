@@ -36,8 +36,8 @@ public class Flow {
 		fp.setPreferredSize(new Dimension(frameX,frameY));
 		g.add(fp);
 		fp.end.set(true);
-		Thread fpt=new Thread(fp);
-		fpt.start();
+//		Thread fpt=new Thread(fp);
+//		fpt.start();
 
 		// to do: add a MouseListener, buttons and ActionListeners on those buttons
 		JPanel b = new JPanel();
@@ -52,7 +52,7 @@ public class Flow {
 				int column = e.getX();
 				if ((column != 0)&(column != landdata.getDimX() - 1) & (row != 0) || (row != landdata.getDimY() - 1)) {
 					w.addWater(column, row);
-					w.inuse.set(true);
+
 					fp.repaint();
 				}
 			}
@@ -84,7 +84,7 @@ public class Flow {
 		play.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				// to do ask threads to stop
-				w.inuse.set(false);
+
 				fp.running.set(true);
 
 			}
@@ -96,17 +96,17 @@ public class Flow {
 		pause.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				// to do ask threads to stop
-				w.inuse.set(false);
+
 				fp.running.set(false);
 			}
 			});
 
-		//timestep=new JLabel("Time step: "+String.valueOf(fp.getTimeStep()));
+		timestep=new JLabel("Time step: "+String.valueOf(fp.getTimeStep()));
 		b.add(reset);
 		b.add(pause);
 		b.add(play);
 		b.add(endB);
-		//b.add(timestep);
+		b.add(timestep);
 
 		g.add(b);
 		frame.setSize(frameX, frameY+50);	// a little extra space at the bottom for buttons
