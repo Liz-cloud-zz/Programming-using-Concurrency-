@@ -29,7 +29,7 @@ public class FlowPanel extends JPanel implements Runnable {
 	/**
 	 * 	// responsible for painting the terrain and water
 	 * 	// as images
-	 * @param g
+	 * @param g graphics components to be drawn images on
 	 */
 
 	@Override

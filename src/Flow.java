@@ -31,9 +31,9 @@ public class Flow {
 
 	/**
 	 * set up the GUI and creates Action Listeners and Mouse listeners to effect changes on GUI window
-	 * @param frameX
-	 * @param frameY
-	 * @param landdata
+	 * @param frameX width of terrain
+	 * @param frameY height of terrain
+	 * @param landdata terrain object
 	 */
 	public static void setupGUI(int frameX,int frameY,Terrain landdata) {
 		
@@ -131,7 +131,7 @@ public class Flow {
 
 	/**
 	 * //main method passses in the textfile of terrain heights and dimension as argument and creates a terrain image and calls the setupGUI method
-	 * @param args
+	 * @param args textfile of terrain data
 	 */
 
 	public static void main(String[] args) {

@@ -21,20 +21,20 @@ public class Terrain {
 	ArrayList<Integer> permute;	// permuted list of integers in range [0, dimx*dimy)
 
 	/**
-	 * 	// overall number of elements in the height grid
-	 * @return
+	 * 	overall number of elements in the height grid
+	 * @return number of elements
 	 */
 	int dim(){
 		return dimx*dimy;
 	}
 	/**
-	 * // get x-dimensions (number of columns)
+	 * get x-dimensions (number of columns)
 	 */
 	int getDimX(){
 		return dimx;
 	}
 	/**
-	 * // get y-dimensions (number of rows)
+	 * get y-dimensions (number of rows)
 	 */
 	int getDimY(){
 		return dimy;
@@ -42,7 +42,7 @@ public class Terrain {
 
 	/**
 	 *
-	 * @return // get greyscale image
+	 * @return greyscale image of terrain
 	 */
 
 	public BufferedImage getImage() {
@@ -51,8 +51,8 @@ public class Terrain {
 
 	/**
 	 * // convert linear position into 2D location in grid
-	 * @param pos
-	 * @param ind
+	 * @param pos liner index
+	 * @param ind array of size 2 to store coordinates in
 	 */
 	void locate(int pos, int [] ind)
 	{
@@ -62,16 +62,16 @@ public class Terrain {
 
 	/**
 	 * return the floating elevation value
-	 * @param x
-	 * @param y
-	 * @return
+	 * @param x coordinate x
+	 * @param y coordinate y
+	 * @return floating value of terrain point elevation
 	 */
 	public float getHeight(int x,int y){
 		return (this.height[y][x]);
 	}
 
 	/**
-	 * // convert height values to greyscale colour and populate an image
+	 *  convert height values to greyscale colour and populate an image
 	 */
 	void deriveImage()
 	{
@@ -98,8 +98,8 @@ public class Terrain {
 	}
 
 	/**
-	 * 	// generate a permuted list of linear index positions to allow a random
-	 * 	// traversal over the terrain
+	 * 	 generate a permuted list of linear index positions to allow a random
+	 * 	 traversal over the terrain
 	 */
 	void genPermute() {
 		permute = new ArrayList<Integer>();
@@ -111,8 +111,8 @@ public class Terrain {
 	/**
 	 * // find permuted 2D location from a linear index in the
 	 * 	// range [0, dimx*dimy)
-	 * @param i
-	 * @param loc
+	 * @param i liner index
+	 * @param loc array of size two to store coordinates of point
 	 */
 	void getPermute(int i, int [] loc) {
 		locate(permute.get(i), loc);
@@ -120,7 +120,7 @@ public class Terrain {
 
 	/**
 	 * 	// read in terrain from file
-	 * @param fileName
+	 * @param fileName of text file
 	 */
 	void readData(String fileName){ 
 		try{ 

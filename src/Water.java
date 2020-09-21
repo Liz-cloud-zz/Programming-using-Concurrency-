@@ -16,8 +16,8 @@ public class Water {
 
     /**
      * constructor for water
-     * @param t
-     * @param depth
+     * @param t Terrain Object
+     * @param depth depth of water
      */
     public Water(Terrain t, int depth) {
         this.depth = depth;
@@ -29,8 +29,8 @@ public class Water {
 
     /**
      *  draw the box of water on the 3 by 3 area grid point
-     * @param x
-     * @param y
+     * @param x coordinate x
+     * @param y coordinate y
      */
     public void addWater(int x,int y){
 
@@ -59,7 +59,7 @@ public class Water {
     }
 
     /**
-     *  // water unit corresponds to a depth of 0.01m so this depth is 0.03m
+     *  water unit corresponds to a depth of 0.01m so this depth is 0.03m
      * @return the depth of water in decimals
      */
     public float convertWater() {
@@ -67,18 +67,18 @@ public class Water {
     }
 
     /**
-     *   //get the water surface at each point
-     * @param x
-     * @param y
-     * @return
+     *   get the water surface at each point
+     * @param x coordinate x
+     * @param y coordinate y
+     * @return floating value of water suface
      */
     public float getWater_surface(int x, int y) {
         return (t.getHeight(x, y) + convertWater());
     }
 
     /**
-     * /transfer water to the lowest point among the surrounding grid points from the current point
-     * @param permu
+     * transfer water to the lowest point among the surrounding grid points from the current point
+     * @param permu ArrayList to be processed by thread
      */
     public void transferWater(ArrayList permu) {
         int row = t.getDimY();
@@ -196,12 +196,12 @@ public class Water {
 
     /**
      *
-     * @return //return the water image
+     * @return the water image
      */
     public BufferedImage getImg(){return water;}
 
     /**
-     * //remove water from the terrain
+     * remove water from the terrain
      */
 
     public void removeWater(){

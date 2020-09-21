@@ -16,6 +16,8 @@ public class Producer implements Runnable{
 
     /**
      * Producer constructor initializes producer object
+     * @param num Thread number
+     * @param w Water object
      */
    public Producer(Water w, int num) {
         this.w = w;
@@ -25,7 +27,7 @@ public class Producer implements Runnable{
     }
 
     /**
-     *  //split the permute array in 4 to assign each 1/4 to the thread
+     *  split the permute array in 4 to assign each 1/4 to the thread
      */
     public synchronized void run() {
             int quarter = (w.t.permute.size()) / 4;
