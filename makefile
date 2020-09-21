@@ -16,7 +16,6 @@ run1:
 	java	-cp	bin Flow
 run2:
 	java	-cp	bin Flow	"\src\SampleData\largesample_in.txt"
-
 docs:
 	javadoc	-d	$(docdir)	$(SRCDIR)
 
