@@ -1,5 +1,5 @@
 
-package FlowSkeleton;
+//package FlowSkeleton;
 import java.io.File;
 import java.awt.image.*;
 import java.awt.Color;

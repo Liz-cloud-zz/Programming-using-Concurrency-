@@ -1,5 +1,5 @@
 
-package FlowSkeleton;
+//package FlowSkeleton;
 import javax.swing.*;
 
 import java.awt.Dimension;
