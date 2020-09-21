@@ -14,15 +14,20 @@ public class Producer implements Runnable{
     private Water w;
     private Thread thread;
 
+    /**
+     * Producer constructor initializes producer object
+     */
    public Producer(Water w, int num) {
         this.w = w;
         this.threadnum = num;
         w.t.genPermute();
 
     }
-    public synchronized void run() {
-        //split the permute array in 4 to assign each quater to the thread
 
+    /**
+     *  //split the permute array in 4 to assign each 1/4 to the thread
+     */
+    public synchronized void run() {
             int quarter = (w.t.permute.size()) / 4;
             ArrayList<Integer> first = new ArrayList();
             for (int index0 = 0; index0 < quarter - 1; index0++) {

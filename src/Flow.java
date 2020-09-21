@@ -13,16 +13,28 @@ public class Flow {
 	static int frameY;
 	static FlowPanel fp;
 
-	// start timer
+	/**
+	 * // start timer
+	 */
+
 	private static void tick(){
 		startTime = System.currentTimeMillis();
 	}
-	
-	// stop timer, return time elapsed in seconds
+
+	/**
+	 * // stop timer
+	 * @return return time elapsed in second
+	 */
 	private static float tock(){
 		return (System.currentTimeMillis() - startTime) / 1000.0f; 
 	}
-	
+
+	/**
+	 * set up the GUI and creates Action Listeners and Mouse listeners to effect changes on GUI window
+	 * @param frameX
+	 * @param frameY
+	 * @param landdata
+	 */
 	public static void setupGUI(int frameX,int frameY,Terrain landdata) {
 		
 		Dimension fsize = new Dimension(800, 800);
@@ -117,7 +129,11 @@ public class Flow {
 
 	}
 
-	//main method passses in the textfile of terrain heights and dimension as argument and creates a terrain image and calls the setupGUI method
+	/**
+	 * //main method passses in the textfile of terrain heights and dimension as argument and creates a terrain image and calls the setupGUI method
+	 * @param args
+	 */
+
 	public static void main(String[] args) {
 		Terrain landdata = new Terrain();
 		

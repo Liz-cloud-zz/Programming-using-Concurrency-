@@ -17,12 +17,21 @@ public class FlowPanel extends JPanel implements Runnable {
 	final AtomicInteger count=new AtomicInteger(0);
 	Water water;
 
+	/**
+	 * Flow panel constructor initializes the flow panel object
+	 * @param w
+	 */
 	FlowPanel(Water w){
 		this.water=w;
 		end.set(true);
 	}
-		// responsible for painting the terrain and water
-	// as images
+
+	/**
+	 * 	// responsible for painting the terrain and water
+	 * 	// as images
+	 * @param g
+	 */
+
 	@Override
 	protected void paintComponent(Graphics g) {
 		int width = getWidth();
@@ -35,10 +44,16 @@ public class FlowPanel extends JPanel implements Runnable {
 		}
 	}
 
-
+	/**
+	 *
+	 * @return number of time steps each simulation takes
+	 */
 	public int getTimeStep(){
 		return count.get();
 	}
+	/**
+	 * overridden run() method used to initialise 4 threads start them and join the results as long as the end state is false
+	 */
 	public void run() {
 		for(int num=0;num<4;num++){
 			producers[num]=new Producer(water,num);
