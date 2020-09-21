@@ -11,15 +11,12 @@ import java.util.concurrent.atomic.*;
 
 public class Producer implements Runnable{
     private int threadnum;
-    Water w;
-    Thread thread;
-    String threadName;
+    private Water w;
+    private Thread thread;
 
-
-    public Producer(Water w, int num) {
+   public Producer(Water w, int num) {
         this.w = w;
         this.threadnum = num;
-        threadName = String.valueOf(threadnum);
         w.t.genPermute();
 
     }
